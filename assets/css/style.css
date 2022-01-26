@@ -1,0 +1,9 @@
+* {
+    box-sizing: border-box;
+}
+
+.hero {
+    padding: 1% 4%;
+    background-color: darkblue;
+    color: white;
+}
