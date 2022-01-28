@@ -12,16 +12,16 @@
     <header class="hero">
         <h1 class="title">Weather Dashboard</h1>
     </header>
-    <main class="justify-space-between container">
+    <main class="container">
         <div class="row">
-            <div class="col-4 col-md-4">
+            <div class="col-4 col-md-4 vh-100">
                 <!-- City Search Bar -->
                 <div class="card">
                     <h3 class="card-header text-uppercase">Search for a city:</h3>
                     <form id="city-form" class="card-body">
-                        <label class="form-label" for="city">City</label>
-                        <input name="city" id="city" type="text" class="form-input" />
-                        <button type="submit" class="btn">Submit</button>
+                        <label class="row form-label" for="city"></label>
+                        <input name="city" id="city" type="text" placeholder="Nashville" class="form-input" />
+                        <button type="submit" class="btn bg-primary text-white">Search</button>
                     </form>
                 </div>
                 <!-- Recent searches -->
@@ -37,9 +37,9 @@
                     <div id="current-container" class=""></div>
                 </div>
                 <!-- Current 5 Day Forecast-->
-                <div class="card">
-                    <div id="forecast-container">
-                    </div>
+                <div id="forecast-container">
+                    
+                    
                 </div>
             </div>
         </div>

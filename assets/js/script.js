@@ -40,7 +40,7 @@ var getWeather = function(lat, lon) {
 
     fetch(apiUrl).then(function(response) {
         response.json().then(function(data) {
-            console.log(data);
+            console.log(data.current);
             DisplayCurrent(data.current)
             displayForecast(data.daily)
         });
@@ -50,10 +50,16 @@ var getWeather = function(lat, lon) {
 var DisplayCurrent = function(current) {
     // clear old content
     currentContainerEl.textContent = "";
+    // get current date
+    // var date = current.dt.parseExact("mm-dd-yyyy");
+    // console.log(date);
 
     // get city name
     var cityName = cityInputEl.value;
-    // console.log(cityName);
+    // get current date
+    var currDate = moment().format("MM/DD/YYYY");
+    // get weather icon 
+    var weather = current.weather[0].icon;
     // get current temp
     var currTemp = current.temp;
     // get wind
@@ -63,10 +69,18 @@ var DisplayCurrent = function(current) {
     // get UV index
     var uvIndex = current.uvi;
     
-    // create an h3 for the city name
+    // create div for the city date and icon
+    var citySpanEl = document.createElement("span");
+
+    // create an h3 for the city name + date
     var cityEl = document.createElement("h3");
-    cityEl.textContent = cityName;
-    currentContainerEl.appendChild(cityEl);
+    cityEl.textContent = cityName + " " + currDate;
+    citySpanEl.appendChild(cityEl);
+    // create img for the icon
+    var weatherIcon = document.createElement("img");
+    weatherIcon.src = "http://openweathermap.org/img/wn/" + weather + "@2x.png";
+    citySpanEl.appendChild(weatherIcon);
+    currentContainerEl.appendChild(citySpanEl);
 
     // create a ul for the temp stuff
     var currentListEl = document.createElement("ul");
@@ -94,11 +108,28 @@ var displayForecast = function(forecast){
     // clear old content
     forecastContainerEl.textContent = "";
     // create header 
-    var headerEl = document.createElement("h3");
-    headerEl.textContent = "5-Day Forecast:";
+    var headerEl = document.createElement("div");
+    headerEl.classList = "col-sm-8 text-center"
+    var headerTextEl = document.createElement("h3");
+    headerTextEl.textContent = "5-Day Forecast:";
+    headerEl.appendChild(headerTextEl);
     forecastContainerEl.appendChild(headerEl);
+    // make row div for the forecasts
+    var forecastFiveDayContainerEl = document.createElement("div");
+    forecastFiveDayContainerEl.classList = "row";
 
+    // get dates
+    var nextFiveDays = [
+        tomorrow = moment().add(1, "day").format("MM/DD/YYYY"),
+        twoDays = moment().add(2, "day").format("MM/DD/YYYY"),
+        threeDays = moment().add(3, "day").format("MM/DD/YYYY"),
+        fourDays = moment().add(4, "day").format("MM/DD/YYYY"),
+        lastDay = moment().add(5, "day").format("MM/DD/YYYY")
+    ];
+    console.log(nextFiveDays);
     for (var i = 0; i < 5; i++) {
+        // get the weather icon
+        var weather = forecast[i].weather[0].icon;
         // get the temp
         var temp = forecast[i].temp.day;
         // get the wind speed
@@ -107,25 +138,34 @@ var displayForecast = function(forecast){
         var humid = forecast[i].humidity;
         // create a card for the day
         dailyCardEl = document.createElement("div");
-        dailyCardEl.ClassList = "row justify-space-between";
-        // create ul for forecast stuff
-        var dailyListEl = document.createElement("ul")
-        // create li for temp
-        var tempEl = document.createElement("li");
+        dailyCardEl.classList = "col";
+        // create div for forecast stuff
+        var dailyListEl = document.createElement("div")
+        // add date
+        var date = document.createElement("h6");
+        date.textContent = nextFiveDays[i];
+        dailyListEl.appendChild(date);
+        // create icon
+        var weatherIcon = document.createElement("img");
+        weatherIcon.src = "http://openweathermap.org/img/wn/" + weather + "@2x.png";
+        dailyListEl.appendChild(weatherIcon);
+        // create p for temp
+        var tempEl = document.createElement("p");
         tempEl.textContent = temp + " °F";
         dailyListEl.appendChild(tempEl);
-        // create li for wind
-        var windEl = document.createElement("li");
+        // create p for wind
+        var windEl = document.createElement("p");
         windEl.textContent = windSpd + " MPH";
         dailyListEl.appendChild(windEl);
-        // create li for humidity
-        var humidEl = document.createElement("li");
+        // create p for humidity
+        var humidEl = document.createElement("p");
         humidEl.textContent = humid + " %";
         dailyListEl.appendChild(humidEl);
 
         // append all to container
         dailyCardEl.appendChild(dailyListEl);
-        forecastContainerEl.appendChild(dailyCardEl);
+        forecastFiveDayContainerEl.appendChild(dailyCardEl);
+        forecastContainerEl.appendChild(forecastFiveDayContainerEl);
     
 
     }
@@ -146,6 +186,10 @@ var saveInputs = function() {
 var loadInputs = function() {
     
     var savedSearches = localStorage.getItem("Searches");
+    
+    if (!savedSearches) {
+        return false;
+    }
 
     savedSearches = JSON.parse(savedSearches);
     
@@ -154,7 +198,6 @@ var loadInputs = function() {
         displayRecent(savedSearches[i]);
     }
 
-    
 }
 loadInputs();
 cityFormEl.addEventListener("submit", formSubmitHandler);
