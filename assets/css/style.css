@@ -1,3 +1,8 @@
+:root {
+    --primary-color: #1d1d79;
+    --primary-text-color: white;
+    --recent-search-color: gray;
+}
 * {
     box-sizing: border-box;
 }
@@ -6,4 +11,10 @@
     padding: 1% 4%;
     background-color: darkblue;
     color: white;
+}
+
+.forecast-card {
+    background-color: var(--primary-color);
+    color: var(--primary-text-color);
+    margin: 10px;
 }

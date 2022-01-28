@@ -116,7 +116,7 @@ var displayForecast = function(forecast){
     forecastContainerEl.appendChild(headerEl);
     // make row div for the forecasts
     var forecastFiveDayContainerEl = document.createElement("div");
-    forecastFiveDayContainerEl.classList = "row";
+    forecastFiveDayContainerEl.classList = "row justify-space-between";
 
     // get dates
     var nextFiveDays = [
@@ -138,7 +138,7 @@ var displayForecast = function(forecast){
         var humid = forecast[i].humidity;
         // create a card for the day
         dailyCardEl = document.createElement("div");
-        dailyCardEl.classList = "col";
+        dailyCardEl.classList = "col-2 forecast-card";
         // create div for forecast stuff
         var dailyListEl = document.createElement("div")
         // add date
