@@ -10,31 +10,30 @@
 </head>
 <body class="flex-column min-100-vh">
     <header class="hero">
-        <h1 class="title">Weather Dashboard</h1>
+        <h1 class="title text-center text-white">Weather Dashboard</h1>
     </header>
     <main class="container">
         <div class="row">
             <div class="col-4 col-md-4 vh-100">
                 <!-- City Search Bar -->
-                <div class="card">
+                <div class="card city-input">
                     <h3 class="card-header text-uppercase">Search for a city:</h3>
-                    <form id="city-form" class="card-body">
+                    <form id="city-form" class="card-body d-block">
                         <label class="row form-label" for="city"></label>
-                        <input name="city" id="city" type="text" placeholder="Nashville" class="form-input" />
-                        <button type="submit" class="btn bg-primary text-white">Search</button>
+                        <input name="city" id="city" type="text" onfocus="this.value=''" placeholder="City Name" class="form-input w-100 m-1" />
+                        <button type="submit" class="btn bg-primary text-white w-100 m-1">Search</button>
                     </form>
                 </div>
                 <!-- Recent searches -->
-                <div class="card">
-                    <h3 class="card-header text-uppercase"></h3>
+                <div class="card city-searches">
                     <div id="recent" class="list-group"></div> 
                 </div>
             </div>
                         
                 <!-- current Display -->
-            <div class="col-8">
+            <div class="col" id="forecast-display">
                 <div class="card">
-                    <div id="current-container" class=""></div>
+                    <div id="current-container"></div>
                 </div>
                 <!-- Current 5 Day Forecast-->
                 <div id="forecast-container" class="justify-space-between">

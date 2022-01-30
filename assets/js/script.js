@@ -1,22 +1,43 @@
 // array for local storage
-var Searches = [];
-
+var searches = [];
+var city = "";
 var cityFormEl = document.querySelector("#city-form");
 var cityInputEl = document.querySelector("#city");
+
 var currentContainerEl = document.querySelector("#current-container");
 var forecastContainerEl = document.querySelector("#forecast-container");
 var recentContainerEl = document.querySelector("#recent");
+var searchBtnEl = document.querySelector("#recent-city");
+
+// city submit function
 var formSubmitHandler = function(event) {
     event.preventDefault();
 
-    var city = cityInputEl.value.trim();
-    Searches.push(city);
+    city = cityInputEl.value.trim();
+    searches.push(city);
     saveInputs();
+    loadInputs();
     getCityCoord(city);
 
 }
+
+// search button submit function
+var searchSubmitHandler = function(event) {
+    event.preventDefault();
+
+    city = event.target.getAttribute("recent-city");
+    
+    
+    if (city) {
+        getCityCoord(city);
+    }
+    currentContainerEl.textContent = "";
+    forecastContainerEl.textContent = "";
+}
 // get the city coordinates
 var getCityCoord = function(city) {
+
+
     var apiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + city + "&appid=517de5faf3cb347639711104e90d0acb";
     
     fetch(apiUrl).then(function(response) {
@@ -40,7 +61,7 @@ var getWeather = function(lat, lon) {
 
     fetch(apiUrl).then(function(response) {
         response.json().then(function(data) {
-            console.log(data.current);
+            
             DisplayCurrent(data.current)
             displayForecast(data.daily)
         });
@@ -50,12 +71,9 @@ var getWeather = function(lat, lon) {
 var DisplayCurrent = function(current) {
     // clear old content
     currentContainerEl.textContent = "";
-    // get current date
-    // var date = current.dt.parseExact("mm-dd-yyyy");
-    // console.log(date);
 
     // get city name
-    var cityName = cityInputEl.value;
+    var cityName = city;
     // get current date
     var currDate = moment().format("MM/DD/YYYY");
     // get weather icon 
@@ -69,36 +87,59 @@ var DisplayCurrent = function(current) {
     // get UV index
     var uvIndex = current.uvi;
     
+    
+    
     // create div for the city date and icon
     var citySpanEl = document.createElement("span");
 
     // create an h3 for the city name + date
     var cityEl = document.createElement("h3");
+    cityEl.classList = "font-weight-bold";
     cityEl.textContent = cityName + " " + currDate;
     citySpanEl.appendChild(cityEl);
     // create img for the icon
     var weatherIcon = document.createElement("img");
     weatherIcon.src = "http://openweathermap.org/img/wn/" + weather + "@2x.png";
+    // weatherIcon.classList = "bg-primary";
     citySpanEl.appendChild(weatherIcon);
     currentContainerEl.appendChild(citySpanEl);
 
     // create a ul for the temp stuff
-    var currentListEl = document.createElement("ul");
-    // create a li for the current temp
-    var tempEl = document.createElement("li");
-    tempEl.textContent = "Temp: " + currTemp + "°F";
+    var currentListEl = document.createElement("div");
+    currentListEl.classList = "text-start"
+    // create a p for the current temp
+    var tempEl = document.createElement("p");
+    tempEl.textContent = "Temp: " + currTemp + " °F";
     currentListEl.appendChild(tempEl);
-    // create li for the current wind
-    var windEl = document.createElement("li");
-    windEl.textContent = "Wind: " + windSpd + "MPH";
+    // create p for the current wind
+    var windEl = document.createElement("p");
+    windEl.textContent = "Wind: " + windSpd + " MPH";
+    
     currentListEl.appendChild(windEl);
-    // create li for the current humidity
-    var humidEL = document.createElement("li");
-    humidEL.textContent = "Humidity: " + humidity + "%";
+    // create p for the current humidity
+    var humidEL = document.createElement("p");
+    humidEL.textContent = "Humidity: " + humidity + " %";
     currentListEl.appendChild(humidEL);
-    // create li for current UV Index
-    var indexEl = document.createElement("li");
-    indexEl.textContent = "UV Index: " + uvIndex;
+    // create div for current UV Index
+    var indexEl = document.createElement("span");
+    indexEl.classList = "row uvindex-row";
+    
+    indexEl.textContent = "UV Index:  ";
+    // create span for the UV text + color
+    var indexSpan = document.createElement("p");
+    indexSpan.textContent = uvIndex;
+    
+    // get background color
+    if (uvIndex >= 0.00 && uvIndex <= 2.99) {
+        indexSpan.classList = "bg-success";
+    }
+    else if (uvIndex >= 3.00 && uvIndex <= 5.99) {
+        indexSpan.classList = "bg-warning";
+    }
+    else {
+        indexSpan.classList = "bg-danger";
+    }
+    indexEl.appendChild(indexSpan);
     currentListEl.appendChild(indexEl);
     // append list to container
     currentContainerEl.appendChild(currentListEl);
@@ -116,7 +157,7 @@ var displayForecast = function(forecast){
     forecastContainerEl.appendChild(headerEl);
     // make row div for the forecasts
     var forecastFiveDayContainerEl = document.createElement("div");
-    forecastFiveDayContainerEl.classList = "row justify-space-between";
+    forecastFiveDayContainerEl.classList = "row";
 
     // get dates
     var nextFiveDays = [
@@ -126,7 +167,7 @@ var displayForecast = function(forecast){
         fourDays = moment().add(4, "day").format("MM/DD/YYYY"),
         lastDay = moment().add(5, "day").format("MM/DD/YYYY")
     ];
-    console.log(nextFiveDays);
+    
     for (var i = 0; i < 5; i++) {
         // get the weather icon
         var weather = forecast[i].weather[0].icon;
@@ -138,7 +179,7 @@ var displayForecast = function(forecast){
         var humid = forecast[i].humidity;
         // create a card for the day
         dailyCardEl = document.createElement("div");
-        dailyCardEl.classList = "col-2 forecast-card";
+        dailyCardEl.classList = "col forecast-card";
         // create div for forecast stuff
         var dailyListEl = document.createElement("div")
         // add date
@@ -151,15 +192,15 @@ var displayForecast = function(forecast){
         dailyListEl.appendChild(weatherIcon);
         // create p for temp
         var tempEl = document.createElement("p");
-        tempEl.textContent = temp + " °F";
+        tempEl.textContent = "Temp: " + temp + " °F";
         dailyListEl.appendChild(tempEl);
         // create p for wind
         var windEl = document.createElement("p");
-        windEl.textContent = windSpd + " MPH";
+        windEl.textContent = "Wind: " + windSpd + " MPH";
         dailyListEl.appendChild(windEl);
         // create p for humidity
         var humidEl = document.createElement("p");
-        humidEl.textContent = humid + " %";
+        humidEl.textContent = "Humidity: " + humid + " %";
         dailyListEl.appendChild(humidEl);
 
         // append all to container
@@ -172,32 +213,35 @@ var displayForecast = function(forecast){
 }
 // display recent searches
 var displayRecent = function(recent) {
-    // create new span
-    var searchSpan = document.createElement("span");
-    searchSpan.textContent = recent;
+    // create new button
+    var searchBtn = document.createElement("button");
+    searchBtn.classList = "searches-btn";
+    searchBtn.setAttribute("recent-city", recent);
+    searchBtn.textContent = recent;
     // append to the recent container
-    recentContainerEl.appendChild(searchSpan);
+    recentContainerEl.appendChild(searchBtn);
+    
 }
 
 var saveInputs = function() {
-    localStorage.setItem("Searches", JSON.stringify(Searches));
+    localStorage.setItem("searches", JSON.stringify(searches));
 }
 
 var loadInputs = function() {
-    
-    var savedSearches = localStorage.getItem("Searches");
-    
+    recentContainerEl.textContent = "";
+    var savedSearches = localStorage.getItem("searches");
     if (!savedSearches) {
         return false;
     }
-
+    
     savedSearches = JSON.parse(savedSearches);
     
     // loop through searches array
     for (var i = 0; i < savedSearches.length; i++) {
         displayRecent(savedSearches[i]);
     }
-
+    searches = savedSearches;
 }
 loadInputs();
 cityFormEl.addEventListener("submit", formSubmitHandler);
+recentContainerEl.addEventListener("click", searchSubmitHandler);

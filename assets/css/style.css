@@ -1,7 +1,7 @@
 :root {
     --primary-color: #1d1d79;
     --primary-text-color: white;
-    --recent-search-color: gray;
+    --recent-search-color: rgb(199, 193, 193);
 }
 * {
     box-sizing: border-box;
@@ -9,12 +9,26 @@
 
 .hero {
     padding: 1% 4%;
-    background-color: darkblue;
-    color: white;
+    background-color: var(--primary-color);
 }
 
 .forecast-card {
     background-color: var(--primary-color);
     color: var(--primary-text-color);
-    margin: 10px;
+    margin: 5px;
+}
+
+.city-input {
+    margin: 0 0 3% 0;
+}
+
+.city-searches {
+    border: none;
+}
+.searches-btn {
+    background-color: var(--recent-search-color);
+    margin: 2% 0;
+}
+.uvindex-row {
+    margin: 0px;
 }
